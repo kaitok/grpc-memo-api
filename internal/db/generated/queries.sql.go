@@ -85,3 +85,17 @@ func (q *Queries) ListMemos(ctx context.Context, userID string) ([]Memo, error) 
 	}
 	return items, nil
 }
+
+const updateMemo = `-- name: UpdateMemo :exec
+UPDATE memos SET content = $2 WHERE id = $1
+`
+
+type UpdateMemoParams struct {
+	ID      uuid.UUID
+	Content string
+}
+
+func (q *Queries) UpdateMemo(ctx context.Context, arg UpdateMemoParams) error {
+	_, err := q.db.ExecContext(ctx, updateMemo, arg.ID, arg.Content)
+	return err
+}

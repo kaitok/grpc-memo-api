@@ -89,3 +89,43 @@ func (s *MemoServer) CreateMemo(ctx context.Context, req *connect.Request[proto.
 		CreatedAt: createdAt.Format(time.RFC3339),
 	}}), nil
 }
+
+// UpdateMemo update memo.
+func (s *MemoServer) UpdateMemo(ctx context.Context, req *connect.Request[proto.UpdateMemoRequest]) (*connect.Response[proto.UpdateMemoResponse], error) {
+	// Parse UUID
+	memoID, err := uuid.Parse(req.Msg.Id)
+	if err != nil {
+		slog.Error("id must be uuid", "error", err)
+		return nil, err
+	}
+
+	// Execute the update operation
+	err = s.DB.UpdateMemo(ctx, generated.UpdateMemoParams{
+		ID:      memoID,
+		Content: req.Msg.Content,
+	})
+	if err != nil {
+		slog.Error("Failed to update memo", "error", err)
+		return nil, err
+	}
+
+	// After the update, retrieve the updated memo from the database
+	updatedMemo, err := s.DB.GetMemo(ctx, generated.GetMemoParams{
+		ID:     memoID,
+		UserID: req.Msg.UserId,
+	})
+	if err != nil {
+		slog.Error("Failed to retrieve updated memo", "error", err)
+		return nil, err
+	}
+
+	// Return the response with the updated memo
+	return connect.NewResponse(&proto.UpdateMemoResponse{
+		Memo: &proto.Memo{
+			Id:        updatedMemo.ID.String(),
+			UserId:    updatedMemo.UserID,
+			Content:   updatedMemo.Content,
+			CreatedAt: updatedMemo.CreatedAt.Format(time.RFC3339),
+		},
+	}), nil
+}

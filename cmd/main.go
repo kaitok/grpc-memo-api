@@ -70,6 +70,13 @@ func main() {
 	)
 	mux.Handle("/memo.MemoService/CreateMemo", handler) // Register the handler with the multiplexer
 
+	// Create a handler for the UpdateMemo endpoint
+	handler = connect.NewUnaryHandler(
+		"/memo.MemoService/UpdateMemo",
+		memoServer.UpdateMemo,
+	)
+	mux.Handle("/memo.MemoService/UpdateMemo", handler)
+
 	// Initialize HTTP/2 server
 	// &http2.Server{} is a struct that represents the configuration of the HTTP/2 server.
 	// This struct provides options to customize the behavior of HTTP/2.

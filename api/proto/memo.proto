@@ -9,6 +9,7 @@ service MemoService {
   rpc ListMemos (ListMemosRequest) returns (ListMemosResponse); // RPC to retrieve a list of memos
   rpc GetMemo (GetMemoRequest) returns (GetMemoResponse); // RPC to retrieve a specific memo
   rpc CreateMemo (CreateMemoRequest) returns (CreateMemoResponse); // RPC to create a new memo
+  rpc UpdateMemo (UpdateMemoRequest) returns (UpdateMemoResponse);
 }
 
 // ListMemosRequest message definition
@@ -40,6 +41,18 @@ message CreateMemoRequest {
 
 // CreateMemoResponse message definition
 message CreateMemoResponse {
+  Memo memo = 1; // Created memo
+}
+
+// UpdateMemoRequest message definition
+message UpdateMemoRequest {
+  string id = 1;
+  string user_id = 2;
+  string content = 3;
+}
+
+// UpdateMemoResponse message definition
+message UpdateMemoResponse {
   Memo memo = 1; // Created memo
 }
 
