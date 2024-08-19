@@ -83,7 +83,7 @@ func main() {
 	// h2c.NewHandler(mux, h2s) creates a handler to process HTTP/2 cleartext (unencrypted) requests.
 	// This allows the gRPC server to use the HTTP/2 protocol.
 	server := &http.Server{
-		Addr:    ":50051",                 // Server address and port
+		Addr:    ":50052",                 // Server address and port
 		Handler: h2c.NewHandler(mux, h2s), // Set HTTP/2 cleartext handler
 	}
 
