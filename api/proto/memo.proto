@@ -1,0 +1,52 @@
+syntax = "proto3"; // Specify Protocol Buffers version
+
+package memo; // Specify package name
+
+option go_package = "grpc-memo-api/api/proto;proto"; // Specify package name for generated Go code
+
+// MemoService service definition
+service MemoService {
+  rpc ListMemos (ListMemosRequest) returns (ListMemosResponse); // RPC to retrieve a list of memos
+  rpc GetMemo (GetMemoRequest) returns (GetMemoResponse); // RPC to retrieve a specific memo
+  rpc CreateMemo (CreateMemoRequest) returns (CreateMemoResponse); // RPC to create a new memo
+}
+
+// ListMemosRequest message definition
+message ListMemosRequest {
+  string user_id = 1; // User ID
+}
+
+// ListMemosResponse message definition
+message ListMemosResponse {
+  repeated Memo memos = 1; // List of memos
+}
+
+// GetMemoRequest message definition
+message GetMemoRequest {
+  string user_id = 1; // User ID
+  string memo_id = 2; // Memo ID
+}
+
+// GetMemoResponse message definition
+message GetMemoResponse {
+  Memo memo = 1; // Memo
+}
+
+// CreateMemoRequest message definition
+message CreateMemoRequest {
+  string user_id = 1; // User ID
+  string content = 2; // Memo content
+}
+
+// CreateMemoResponse message definition
+message CreateMemoResponse {
+  Memo memo = 1; // Created memo
+}
+
+// Memo message definition
+message Memo {
+  string id = 1; // Memo ID
+  string user_id = 2; // User ID
+  string content = 3; // Memo content
+  string created_at = 4; // Creation timestamp
+}
