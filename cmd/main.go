@@ -88,7 +88,7 @@ func main() {
 	}
 
 	// Log server startup message
-	slog.Info("gRPC server is running on port 50051")
+	slog.Info("gRPC server is running on port 50052")
 
 	// Start gRPC server
 	// server.ListenAndServe() starts the HTTP server on the specified address and port.
