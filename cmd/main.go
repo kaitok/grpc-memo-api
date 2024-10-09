@@ -15,6 +15,22 @@ import (
 	"golang.org/x/net/http2/h2c"
 )
 
+func corsMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")                   // どのオリジンでも許可
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS") // 許可するメソッド
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+
+		// Preflightリクエストの処理
+		if r.Method == http.MethodOptions {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
+}
+
 func main() {
 	// Load .env file
 	err := godotenv.Load()
@@ -54,28 +70,28 @@ func main() {
 		"/memo.MemoService/ListMemos", // Endpoint path
 		memoServer.ListMemos,          // Function to handle the request
 	)
-	mux.Handle("/memo.MemoService/ListMemos", handler) // Register the handler with the multiplexer
+	mux.Handle("/memo.MemoService/ListMemos", corsMiddleware(handler)) // Register the handler with the multiplexer
 
 	// Create a handler for the GetMemo endpoint
 	handler = connect.NewUnaryHandler(
 		"/memo.MemoService/GetMemo", // Endpoint path
 		memoServer.GetMemo,          // Function to handle the request
 	)
-	mux.Handle("/memo.MemoService/GetMemo", handler) // Register the handler with the multiplexer
+	mux.Handle("/memo.MemoService/GetMemo", corsMiddleware(handler)) // Register the handler with the multiplexer
 
 	// Create a handler for the CreateMemo endpoint
 	handler = connect.NewUnaryHandler(
 		"/memo.MemoService/CreateMemo", // Endpoint path
 		memoServer.CreateMemo,          // Function to handle the request
 	)
-	mux.Handle("/memo.MemoService/CreateMemo", handler) // Register the handler with the multiplexer
+	mux.Handle("/memo.MemoService/CreateMemo", corsMiddleware(handler)) // Register the handler with the multiplexer
 
 	// Create a handler for the UpdateMemo endpoint
 	handler = connect.NewUnaryHandler(
 		"/memo.MemoService/UpdateMemo",
 		memoServer.UpdateMemo,
 	)
-	mux.Handle("/memo.MemoService/UpdateMemo", handler)
+	mux.Handle("/memo.MemoService/UpdateMemo", corsMiddleware(handler))
 
 	// Initialize HTTP/2 server
 	// &http2.Server{} is a struct that represents the configuration of the HTTP/2 server.
